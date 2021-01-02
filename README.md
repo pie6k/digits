@@ -1,3 +1,9 @@
+# How to run this
+
+Install dependencies `yarn install`
+
+To run tests, run `yarn test`
+
 # Data transformation challenge
 
 Please complete this exercise using Clojure or ClojureScript. It's divided into three parts, each building on the previous. You should spend no more than two hours in total, and should try to complete as many parts as possible.
@@ -60,9 +66,7 @@ than
 "   |_|  |"
 ```
 
-
 Remember to be very careful to read the definition of checksum correctly. It is not a simple dot product, the digits are reversed from what you might expect.
-
 
 ## Suggested Test Cases
 
@@ -125,7 +129,7 @@ use case 1
 => 123456789
 
 use case 3
- _  _  _  _  _  _  _  _    
+ _  _  _  _  _  _  _  _
 | || || || || || || ||_   |
 |_||_||_||_||_||_||_| _|  |
 
