@@ -1,6 +1,7 @@
-type UnknownDigit = '?';
-type ParsedDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
-type ParseResult = Array<ParsedDigit | UnknownDigit>;
+export type UnknownDigit = '?';
+export type ParsedDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+export type ParseResult = Array<ParsedDigit | UnknownDigit>;
+export type ParseResultType = 'OK' | 'ILL' | 'ERR';
 
 /**
  * List of known, parsable digits.
@@ -85,36 +86,15 @@ const nine = [
 const DIGIT_WIDTH = 3;
 
 /**
- * This function will extract only one digit data from full entry row.
- *
- * Result will be array of 3 strings with 3 chars each.
+ * Will parse raw file content containing multiple entries into array of results.
  */
-function pickDigitRowsFromEntryRows(entryRows: string[], digitIndex: number) {
-  return entryRows.map((row) => {
-    return row.substr(digitIndex * DIGIT_WIDTH, DIGIT_WIDTH);
-  });
-}
-
-/**
- * Will parse rows for single entry.
- *
- * It expects array of 3 strings containing entry rows.
- */
-export function parseSingleEntryRows(
-  entryRows: string[],
+export function parseEntriesFileContent(
+  fileContent: string,
   expectedDigitsCount: number,
-): ParseResult {
-  if (entryRows.length !== 3) {
-    throw new Error('Incorrect rows input');
-  }
+): ParseResult[] {
+  const fileRows = fileContent.split('\n');
 
-  return Array.from({ length: expectedDigitsCount }).map((_, digitIndex) => {
-    const digitRows = pickDigitRowsFromEntryRows(entryRows, digitIndex);
-
-    const parsedDigit = parseRowDigit(digitRows);
-
-    return parsedDigit;
-  });
+  return parseEntriesFileRows(fileRows, expectedDigitsCount);
 }
 
 /**
@@ -143,15 +123,36 @@ export function parseEntriesFileRows(
 }
 
 /**
- * Will parse raw file content containing multiple entries into array of results.
+ * Will parse rows for single entry.
+ *
+ * It expects array of 3 strings containing entry rows.
  */
-export function parseEntriesFileContent(
-  fileContent: string,
+export function parseSingleEntryRows(
+  entryRows: string[],
   expectedDigitsCount: number,
-): ParseResult[] {
-  const fileRows = fileContent.split('\n');
+): ParseResult {
+  if (entryRows.length !== 3) {
+    throw new Error('Incorrect rows input');
+  }
 
-  return parseEntriesFileRows(fileRows, expectedDigitsCount);
+  return Array.from({ length: expectedDigitsCount }).map((_, digitIndex) => {
+    const digitRows = pickDigitRowsFromEntryRows(entryRows, digitIndex);
+
+    const parsedDigit = parseRowDigit(digitRows);
+
+    return parsedDigit;
+  });
+}
+
+/**
+ * This function will extract only one digit data from full entry row.
+ *
+ * Result will be array of 3 strings with 3 chars each.
+ */
+function pickDigitRowsFromEntryRows(entryRows: string[], digitIndex: number) {
+  return entryRows.map((row) => {
+    return row.substr(digitIndex * DIGIT_WIDTH, DIGIT_WIDTH);
+  });
 }
 
 /**
@@ -227,8 +228,6 @@ function areRowsEqual(a: string[], b: string[]) {
     return item === b[index];
   });
 }
-
-export type ParseResultType = 'OK' | 'ILL' | 'ERR';
 
 export function getParseResultType(result: ParseResult): ParseResultType {
   if (!isParseResultReadable(result)) {
